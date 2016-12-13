@@ -10,25 +10,10 @@ def client(message):
     client = socket.socket(*stream_info[:3])
     try:
         client.connect(stream_info[-1])
-    except ConnectionRefusedError:
         client.sendall(message.encode('utf8'))
+    except ConnectionRefusedError:
         print ('Connection Refused')
     return client
 
 
-
-
-print (client('blah'))
-
-"""
-[(<AddressFamily.AF_INET: 2>, 
-    <SocketKind.SOCK_STREAM: 1>, 
-    6, ''
-    , 
-    ('127.0.0.1', 80))
-   ,(<AddressFamily.AF_INET: 2>
-    , <SocketKind.SOCK_DGRAM: 2>
-    , 17
-    , ''
-    ,('127.0.0.1', 80))]
-"""
+client('8888888888888888')
