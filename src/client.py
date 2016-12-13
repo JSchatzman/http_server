@@ -12,12 +12,13 @@ def client(message):
     try:
         client.connect(stream_info[-1])
         client.sendall(message.encode('utf8'))
-        echo_message(client, message)
+        echo = echo_message(client, message)
     except (ConnectionRefusedError, KeyboardInterrupt):
         print ('Connection was not made or program was manually stopped')
         print ('Shutting down client')
         client.close()
-    return client
+        return None
+    return echo
 
 
 def echo_message(client, message):

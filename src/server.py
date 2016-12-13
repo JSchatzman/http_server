@@ -20,6 +20,7 @@ def server():
     except (KeyboardInterrupt, BrokenPipeError):
         print ('Shutting Down')
         server.close()
+        server.shutdown(1)
 
 
 def message_handle(message):
