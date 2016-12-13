@@ -14,8 +14,10 @@ def server():
     try:
         while True:
             conn, addr = server.accept()
-            message_handle(conn)
-    except KeyboardInterrupt:
+            message = message_handle(conn)
+            conn.sendall(message.encode('utf8'))
+
+    except (KeyboardInterrupt, BrokenPipeError):
         print ('Shutting Down')
         server.close()
 
@@ -30,7 +32,7 @@ def message_handle(message):
         output += part.decode('utf8')
         if len(part) < buffer_length:
             break
-    print (output)
-    
+    return output
 
-server()
+if __name__ == '__main__':
+    server()

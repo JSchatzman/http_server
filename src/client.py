@@ -1,6 +1,7 @@
 """Implementation of client."""
 
 import socket
+import sys
 
 
 def client(message):
@@ -11,9 +12,27 @@ def client(message):
     try:
         client.connect(stream_info[-1])
         client.sendall(message.encode('utf8'))
-    except ConnectionRefusedError:
-        print ('Connection Refused')
+        echo_message(client, message)
+    except (ConnectionRefusedError, KeyboardInterrupt):
+        print ('Connection was not made or program was manually stopped')
+        print ('Shutting down client')
+        client.close()
     return client
 
 
-client('8888888888888888')
+def echo_message(client, message):
+    """Print and return the echoed message from the server."""
+    buffer_length = 8
+    message_complete = False
+    output = ''
+    while not message_complete:
+        part = client.recv(buffer_length)
+        output += part.decode('utf8')
+        if len(part) < buffer_length:
+            break
+    print (output)
+    return output
+
+
+if __name__ == '__main__':
+    client(sys.argv[1])
