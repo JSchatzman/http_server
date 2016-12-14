@@ -6,7 +6,7 @@ from email.utils import formatdate
 
 def server():
     """Create a server."""
-    address = ('127.0.0.1', 5010)
+    address = ('127.0.0.1', 5038)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -35,8 +35,11 @@ def message_handle(message, http_response):
             message_complete = True
     if http_response:
         response = response_ok()
-        return response
-    return output
+    if (len(output) - 1) % 8 == 0 and output[-1:] == '-':
+        print (output[:-1])
+    else:
+        print (output)
+    return response
 
 
 def response_ok():

@@ -7,7 +7,7 @@ import sys
 
 def client(message):
     """Create a client."""
-    infos = socket.getaddrinfo('127.0.0.1', 5010)
+    infos = socket.getaddrinfo('127.0.0.1', 5038)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
     client = socket.socket(*stream_info[:3])
     eight_mult = False
@@ -45,4 +45,4 @@ def echo_message(client, message, eight_mult):
 
 
 if __name__ == '__main__':
-    client('This is a sample request')
+    client('hell00ooooo')
