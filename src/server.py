@@ -20,7 +20,6 @@ def server():
     except (KeyboardInterrupt, BrokenPipeError):
         print ('Shutting Down')
         server.close()
-        server.shutdown(1)
 
 
 def message_handle(message):
@@ -31,8 +30,8 @@ def message_handle(message):
     while not message_complete:
         part = message.recv(buffer_length)
         output += part.decode('utf8')
-        if len(part) < buffer_length:
-            break
+        if len(part) < buffer_length or not part:
+            message_complete = True
     return output
 
 if __name__ == '__main__':
