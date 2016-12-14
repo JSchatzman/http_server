@@ -1,11 +1,12 @@
 """Implementation of server."""
 
 import socket
+from email.utils import formatdate
 
 
 def server():
     """Create a server."""
-    address = ('127.0.0.1', 5000)
+    address = ('127.0.0.1', 5010)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -14,7 +15,7 @@ def server():
     try:
         while True:
             conn, addr = server.accept()
-            message = message_handle(conn)
+            message = message_handle(conn, True)
             conn.sendall(message.encode('utf8'))
 
     except (KeyboardInterrupt, BrokenPipeError):
@@ -22,7 +23,7 @@ def server():
         server.close()
 
 
-def message_handle(message):
+def message_handle(message, http_response):
     """Handle input message relative to buffer length."""
     buffer_length = 8
     message_complete = False
@@ -32,7 +33,25 @@ def message_handle(message):
         output += part.decode('utf8')
         if len(part) < buffer_length or not part:
             message_complete = True
+    if http_response:
+        response = response_ok()
+        return response
     return output
+
+
+def response_ok():
+    """Return a HTTP 200 response."""
+    message = 'HTTP/1.1 200 OK\nDate: '
+    message += formatdate(timeval=None, localtime=False, usegmt=True)
+    message += '\nThis is a minimal response\n'
+    message.encode('utf8')
+    return message
+
+
+def response_error():
+    """Return a 500 error."""
+    return '500 Internal Server Error'
+
 
 if __name__ == '__main__':
     server()
