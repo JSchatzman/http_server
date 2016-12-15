@@ -59,4 +59,4 @@ def response_error():
 
 
 if __name__ == '__main__':
-    server(False)
+    server(True)

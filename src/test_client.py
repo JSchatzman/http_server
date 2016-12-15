@@ -17,16 +17,21 @@ def message_return():
     return response_error(), response_ok()
 
 
-def test_client():
+CLIENT_PARAMS_TABLE = [
+    ['short'],
+    ['blah'],
+    ['±¥Ä'],
+    [''],
+    ['12345678']
+]
+
+
+@pytest.mark.parametrize('message', CLIENT_PARAMS_TABLE)
+def test_client(message):
     """Test the client echo."""
     from client import client
     error_message, ok_message = message_return()
-    assert client('short') == ok_message
-    assert client('blah') == ok_message
-    assert client('') == ok_message
-    assert client('88888888') == ok_message
-
-    # assert client('±¥Ä') == ok_message
+    assert client(str(message)) == ok_message
 
 
 def test_response_ok():
