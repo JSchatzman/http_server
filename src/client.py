@@ -20,6 +20,7 @@ def client(message, buffer_length=8):
         print ('Shutting down client')
         client.close()
         return
+    print (echo)
     return echo
 
 
@@ -33,11 +34,11 @@ def echo_message(client, message, buffer_length):
         if len(part) < buffer_length or not part:
             break
     if output[:-10] == 'REMOVETHIS':
-        print(output[:-10])
-        return output[:-10]
-    else:
-        print(output)
         return output
+    else:
+        print (output[:-10])
+        print (output)
+        return output[:-10]
 
 
 if __name__ == '__main__':

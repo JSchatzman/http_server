@@ -4,7 +4,7 @@ import socket
 from email.utils import formatdate
 
 
-def server(http_response=False):
+def server(http_response=False, buffer_length=8):
     """Create a server."""
     address = ('127.0.0.1', 5050)
     server = socket.socket(socket.AF_INET,
@@ -15,16 +15,15 @@ def server(http_response=False):
     try:
         while True:
             conn, addr = server.accept()
-            message = message_handle(conn, http_response)
+            message = message_handle(conn, buffer_length, http_response)
             conn.sendall(message.encode('utf8'))
     except (KeyboardInterrupt):
         print ('Shutting Down')
         server.close()
 
 
-def message_handle(message, http_response=False, buffer_length=8):
+def message_handle(message, buffer_length, http_response=False):
     """Handle input message relative to buffer length."""
-    buffer_length = 8
     message_complete = False
     output = ''
     while not message_complete:
