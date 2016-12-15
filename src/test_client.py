@@ -10,3 +10,4 @@ def test_client():
     assert client('blah') == 'blah'
     assert client('88888888') == '88888888'
     assert client(u'±¥Ä') == u'±¥Ä'
+
