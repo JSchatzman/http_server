@@ -4,9 +4,9 @@ import socket
 from email.utils import formatdate
 
 
-def server():
+def server(http_response=False):
     """Create a server."""
-    address = ('127.0.0.1', 5038)
+    address = ('127.0.0.1', 5050)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -15,15 +15,14 @@ def server():
     try:
         while True:
             conn, addr = server.accept()
-            message = message_handle(conn, True)
+            message = message_handle(conn, http_response)
             conn.sendall(message.encode('utf8'))
-
-    except (KeyboardInterrupt, BrokenPipeError):
+    except (KeyboardInterrupt):
         print ('Shutting Down')
         server.close()
 
 
-def message_handle(message, http_response):
+def message_handle(message, http_response=False, buffer_length=8):
     """Handle input message relative to buffer length."""
     buffer_length = 8
     message_complete = False
@@ -35,8 +34,11 @@ def message_handle(message, http_response):
             message_complete = True
     if http_response:
         response = response_ok()
-    if (len(output) - 1) % 8 == 0 and output[-1:] == '-':
-        print (output[:-1])
+        return response
+    else:
+        response = output
+    if output[-10:] == 'REMOVETHIS':
+        print (output[:-10])
     else:
         print (output)
     return response
@@ -44,9 +46,9 @@ def message_handle(message, http_response):
 
 def response_ok():
     """Return a HTTP 200 response."""
-    message = 'HTTP/1.1 200 OK\nDate: '
+    message = 'HTTP/1.1 200 OK\r\nDate: '
     message += formatdate(timeval=None, localtime=False, usegmt=True)
-    message += '\nThis is a minimal response\n'
+    message += '\r\nThis is a minimal response\r\n'
     message.encode('utf8')
     return message
 
@@ -57,4 +59,4 @@ def response_error():
 
 
 if __name__ == '__main__':
-    server()
+    server(False)

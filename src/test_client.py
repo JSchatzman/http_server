@@ -1,31 +1,43 @@
-"""Test the echo server functionality."""
 # -*- coding: utf-8 -*-
+"""Test the echo server functionality."""
+from email.utils import formatdate
+import pytest
+
+
+@pytest.fixture
+def message_return():
+    """Return the correct HTTP response messages."""
+    from server import response_ok, response_error
+    ok_message = 'HTTP/1.1 200 OK\r\nDate: '
+    ok_message += formatdate(timeval=None, localtime=False, usegmt=True)
+    ok_message += '\r\nThis is a minimal response\r\n'
+    ok_message.encode('utf8')
+    error_message = '500 Internal Server Error'
+    error_message.encode('utf8')
+    return response_error(), response_ok()
 
 
 def test_client():
-    """Test client function using server in server.py."""
+    """Test the client echo."""
     from client import client
-    assert client('short') == 'short'
-    assert client('blah') == 'blah'
-    assert client('88888888') == '88888888'
-    assert client('±¥Ä') == '±¥Ä'
+    error_message, ok_message = message_return()
+    assert client('short') == ok_message
+    assert client('blah') == ok_message
+    assert client('') == ok_message
+    assert client('88888888') == ok_message
+
+    # assert client('±¥Ä') == ok_message
+
 
 def test_response_ok():
-     """Return a HTTP 200 response."""
-    from server import test_response_ok
-    message = 'HTTP/1.1 200 OK\nDate: '
-    message += formatdate(timeval=None, localtime=False, usegmt=True)
-    message += '\nThis is a minimal response\n'
-    message.encode('utf8')
-    assert message_ok() == message
-     1. create one variable with whole message
-     2,  then just do one assert that response_ok == message
- 
- def test_response_error():
-    from server import test_response_ok
-    message = 'HTTP/1.1 200 OK\nDate: '
-    message += formatdate(timeval=None, localtime=False, usegmt=True)
-    message += '\nThis is a minimal response\n'
-    message.encode('utf8')
-    assert message_error() == message.encode('utf8')
-   
+    """Test response_ok function."""
+    from server import response_ok
+    error_message, ok_message = message_return()
+    assert response_ok() == ok_message
+
+
+def test_response_error():
+    """Test resposne_error function."""
+    from server import response_error
+    error_message, ok_message = message_return()
+    assert response_error() == error_message
