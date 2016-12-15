@@ -48,14 +48,14 @@ def response_ok():
     """Return a HTTP 200 response."""
     message = 'HTTP/1.1 200 OK\r\nDate: '
     message += formatdate(timeval=None, localtime=False, usegmt=True)
-    message += '\r\nThis is a minimal response\r\n'
+    message += '\r\nThis is a minimal response\r\n\r\n'
     message.encode('utf8')
     return message
 
 
 def response_error():
     """Return a 500 error."""
-    return '500 Internal Server Error'
+    return '500 Internal Server Error\r\n\r\n'
 
 
 if __name__ == '__main__':
