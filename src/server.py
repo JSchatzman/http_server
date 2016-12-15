@@ -6,7 +6,7 @@ from email.utils import formatdate
 
 def server(http_response=False, buffer_length=8):
     """Create a server."""
-    address = ('127.0.0.1', 5021)
+    address = ('127.0.0.1', 5024)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -15,7 +15,7 @@ def server(http_response=False, buffer_length=8):
     try:
         while True:
             conn, addr = server.accept()
-            message = message_handle(conn, buffer_length, http_response)
+            message = message_handle(conn, buffer_length, True)
             conn.sendall(message.encode('utf8'))
     except (KeyboardInterrupt):
         print ('Shutting Down')
@@ -32,10 +32,12 @@ def message_handle(message, buffer_length, http_response=False):
         if len(part) < buffer_length or not part:
             message_complete = True
     if http_response:
-        response = response_ok()
-        return response
-    else:
-        response = output
+        error_message = parse_request(output)
+        if error_message:
+            print ('Error')
+            return response_error(error_message)
+        else:
+            return response_ok()
     if output[-10:] == 'REMOVETHIS':
         print (output[:-10])
         return output
@@ -44,15 +46,12 @@ def message_handle(message, buffer_length, http_response=False):
         return output
 
 
-request = 'GET http://www.w3.org/pub/WWW/TheProject.html HTTP/1.1\r\n'
-request += 'host: http://www.example.com\r\n\r\n'
-
-
 def parse_request(request):
     """Read client request and determine if it's valid."""
     try:
         error = ''
         header_lines = request.split('\r\n')
+        print (header_lines)
         top_line = header_lines[0].split(' ')
 
         # Check validity of top line.
@@ -93,16 +92,17 @@ def response_ok():
     """Return a HTTP 200 response."""
     message = 'HTTP/1.1 200 OK\r\nDate: '
     message += formatdate(timeval=None, localtime=False, usegmt=True)
-    message += '\r\nThis is a minimal response\r\n\r\n'
+    message += '\r\nThis is a minimal response\r\n'
     message.encode('utf8')
     return message
 
 
-def response_error():
+def response_error(error_message):
     """Return a 500 error."""
-    return '500 Internal Server Error\r\n\r\n'
+    error_return = '400 Bad Request\r\n'
+    error_return += error_message + '\r\n\r\n'
+    return error_return
 
 
 if __name__ == '__main__':
-    # server(True)
-    print (parse_request(request))
+    server(True)
