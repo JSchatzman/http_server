@@ -44,6 +44,51 @@ def message_handle(message, buffer_length, http_response=False):
         return output
 
 
+request = 'GET http://www.w3.org/pub/WWW/TheProject.html HTTP/1.1\r\n'
+request += 'host: http://www.example.com\r\n\r\n'
+
+
+def parse_request(request):
+    """Read client request and determine if it's valid."""
+    try:
+        error = ''
+        header_lines = request.split('\r\n')
+        top_line = header_lines[0].split(' ')
+
+        # Check validity of top line.
+
+        if len(header_lines) < 3:
+            error = 'This HTTP request is malformed.'
+            raise ValueError
+        elif top_line[0] != 'GET':
+            error = 'HTTP request must be a GET'
+            raise ValueError
+        elif top_line[2] != 'HTTP/1.1':
+            error = 'Must be HTTP version 1.1'
+            raise ValueError
+        host_line = [line for line in header_lines if line[:6] == 'host: ']
+
+        # Check validitiy of host.
+
+        if not host_line:
+            error = 'No Host Provided.'
+            raise ValueError
+        else:
+            host_line_contents = str(host_line).split(' ')
+            if host_line_contents[1][:10].lower() != 'http://www':
+                error = 'Invalid Host'
+                raise ValueError
+
+        # Check for correct ending of request.
+        if header_lines[-1] != '' or header_lines[-2] != '':
+            error = 'HTTP request not properly ended'
+            raise ValueError
+    except ValueError:
+        if not error:
+            return 'This HTTP request is malformed'
+        return error
+
+
 def response_ok():
     """Return a HTTP 200 response."""
     message = 'HTTP/1.1 200 OK\r\nDate: '
@@ -59,4 +104,5 @@ def response_error():
 
 
 if __name__ == '__main__':
-    server(True)
+    # server(True)
+    print (parse_request(request))
