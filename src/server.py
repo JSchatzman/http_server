@@ -6,7 +6,7 @@ from email.utils import formatdate
 
 def server(http_response=False, buffer_length=8):
     """Create a server."""
-    address = ('127.0.0.1', 5024)
+    address = ('127.0.0.1', 5001)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -31,19 +31,19 @@ def message_handle(message, buffer_length, http_response=False):
         output += part.decode('utf8')
         if len(part) < buffer_length or not part:
             message_complete = True
+    if output[-10:] == 'REMOVETHIS':
+        output = output[:-10]
     if http_response:
         error_message = parse_request(output)
         if error_message:
-            print ('Error')
-            return response_error(error_message)
+            message_output = response_error(error_message)
         else:
-            return response_ok()
-    if output[-10:] == 'REMOVETHIS':
-        print (output[:-10])
-        return output
+            message_output = response_ok()
     else:
-        print (output)
-        return output
+        message_output = output
+    if len(message_output) % 8 == 0:
+        message_output += 'REMOVETHIS'
+    return message_output
 
 
 def parse_request(request):
@@ -51,7 +51,6 @@ def parse_request(request):
     try:
         error = ''
         header_lines = request.split('\r\n')
-        print (header_lines)
         top_line = header_lines[0].split(' ')
 
         # Check validity of top line.
@@ -74,7 +73,7 @@ def parse_request(request):
             raise ValueError
         else:
             host_line_contents = str(host_line).split(' ')
-            if host_line_contents[1][:10].lower() != 'http://www':
+            if host_line_contents[1][:11].lower() != 'http://www.':
                 error = 'Invalid Host'
                 raise ValueError
 
