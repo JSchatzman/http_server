@@ -83,7 +83,7 @@ def parse_request(request):
             raise ValueError
     except ValueError:
         if not error:
-            return 'This HTTP request is malformed'
+            return 'This HTTP request is malformed.'
         return error
 
 
