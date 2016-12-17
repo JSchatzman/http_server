@@ -58,5 +58,12 @@ def test_create_error_params_table():
 def test_client(http_request, output):
     """Assert that different invalid requests are replied correctly."""
     client, response_ok, response_error = test_import_functions()
-    from client import client
     assert client(http_request) == output
+
+
+def test_parse_request_if_valid_request():
+    """Request that the URI is return if valid request is made."""
+    from server import parse_request
+    request = 'GET http://www.w3.org/pub/WWW/TheProject.html HTTP/1.1\r\n'
+    request += 'host: http://www.example.com\r\n\r\n'
+    assert parse_request(request)[0] == 'http://www.w3.org/pub/WWW/TheProject.html'
