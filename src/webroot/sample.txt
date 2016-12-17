@@ -1,0 +1,4 @@
+This is a sample text file.
+Python programming is lots of fun.
+GO Hawks!
+GO Dawgs!
