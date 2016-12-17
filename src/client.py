@@ -40,6 +40,6 @@ def echo_message(client, message, buffer_length):
 
 
 if __name__ == '__main__':
-    request = 'GET http://www.w3.org/pub/WWW/TheProject.html HTTP/1.1\r\n'
+    request = 'GET /home/jordan/http_server/src/webroot/sample.py HTTP/1.1\r\n'
     request += 'host: http://www.example.com\r\n\r\n'
     client(request)

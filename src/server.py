@@ -2,6 +2,8 @@
 
 import socket
 from email.utils import formatdate
+import mimetypes
+import os
 
 
 def server(http_response=False, buffer_length=8):
@@ -38,6 +40,7 @@ def message_handle(message, buffer_length, http_response=False):
         if error_status:
             message_output = response_error(output)
         else:
+            resolve_uri(output)
             message_output = response_ok()
     else:
         message_output = output
@@ -89,6 +92,21 @@ def parse_request(request):
     # If no errors, return URI
 
     return (top_line[1], False)
+
+
+def resolve_uri(uri):
+    """If input is file, return contents, if dir, return dir contents."""
+    uri = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                       uri)
+    print (uri)
+    if os.path.isfile(uri):
+        print ('Yes')
+        print (mimetypes.guess_type(uri))
+        if 'text' in mimetypes.guess_type(uri)[0]:
+            file = open(uri, 'r')
+            file_contents = file.read().encode('utf8')
+            print(file_contents)
+            file.close()
 
 
 def response_ok():
