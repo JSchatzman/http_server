@@ -6,7 +6,7 @@ from email.utils import formatdate
 
 def server(http_response=False, buffer_length=8):
     """Create a server."""
-    address = ('127.0.0.1', 5001)
+    address = ('127.0.0.1', 5000)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -34,9 +34,9 @@ def message_handle(message, buffer_length, http_response=False):
     if output[-10:] == 'REMOVETHIS':
         output = output[:-10]
     if http_response:
-        error_message = parse_request(output)
-        if error_message:
-            message_output = response_error(error_message)
+        output, error_status = parse_request(output)
+        if error_status:
+            message_output = response_error(output)
         else:
             message_output = response_ok()
     else:
@@ -83,8 +83,12 @@ def parse_request(request):
             raise ValueError
     except ValueError:
         if not error:
-            return 'This HTTP request is malformed.'
-        return error
+            return ('This HTTP request is malformed.', True)
+        return (error, True)
+
+    # If no errors, return URI
+
+    return (top_line[1], False)
 
 
 def response_ok():

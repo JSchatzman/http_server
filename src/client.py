@@ -6,7 +6,7 @@ import sys
 
 def client(message, buffer_length=8):
     """Create a client."""
-    infos = socket.getaddrinfo('127.0.0.1', 5001)
+    infos = socket.getaddrinfo('127.0.0.1', 5000)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
     client = socket.socket(*stream_info[:3])
     try:
@@ -42,5 +42,4 @@ def echo_message(client, message, buffer_length):
 if __name__ == '__main__':
     request = 'GET http://www.w3.org/pub/WWW/TheProject.html HTTP/1.1\r\n'
     request += 'host: http://www.example.com\r\n\r\n'
-    print (len(request) % 8)
     client(request)
