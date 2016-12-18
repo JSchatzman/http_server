@@ -6,7 +6,7 @@ import mimetypes
 import os
 
 
-def server(http_response=False, buffer_length=8):
+def server(http_response=False, buffer_length=1024):
     """Create a server."""
     address = ('127.0.0.1', 5047)
     server = socket.socket(socket.AF_INET,
@@ -111,7 +111,7 @@ def resolve_uri(uri):
             contents = file.read().encode('utf8')
         else:
             file = open(uri, 'rb')
-            contents = file.read()
+            contents = str(file.read()).encode('utf8')
         file.close()
         return contents
 

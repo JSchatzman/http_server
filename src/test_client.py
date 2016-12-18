@@ -23,43 +23,31 @@ def test_create_valid_params_table():
     python_request = 'GET requestfiles/sample.py HTTP/1.1\r\n'
     python_request += 'host: http://www.example.com\r\n\r\n'
 
-    python_file = str(open('src/requestfiles/sample.py', 'r').read().encode('utf8'))
-
-    # python_file = b'#!/usr/bin/env python\n\n\ntest = [i for i in range(5)]'
-    # python_file += b'\nprint (test)\n'
+    python_file = str(open('src/requestfiles/sample.py', 'r').read()).encode('utf8')
 
     text_request = 'GET requestfiles/sample.txt HTTP/1.1\r\n'
     text_request += 'host: http://www.example.com\r\n\r\n'
 
     text_file = str(open('src/requestfiles/sample.txt', 'r').read().encode('utf8'))
 
-    # text_file = b'This is a sample text file.\nPython programming is '
-    # text_file += b'lots of fun.\nGO Hawks!\nGO Dawgs!'
-
     html_request = 'GET requestfiles/sample.html HTTP/1.1\r\n'
     html_request += 'host: http://www.example.com\r\n\r\n'
 
     html_file = str(open('src/requestfiles/sample.html', 'r').read().encode('utf8'))
 
-    # html_file = b'<!DOCTYPE html>\n<html>\n<body>\n\n<h1>Sample '
-    # html_file += b'HTML</h1>\n\n<p>Display '
-    # html_file += b'this text in the browswer.</p>\n\n</body>\n</html>'
+    image_file = str(open('src/requestfiles/images/russell.jpg',
+                          'rb').read())
+
+    image_request = 'GET requestfiles/images/russell.jpg HTTP/1.1\r\n'
+    image_request += 'host: http://www.example.com\r\n\r\n'
 
     valid_params_table = [
         [python_request, response_ok(python_file)],
         [html_request, response_ok(html_file)],
+      #  [image_request, response_ok(image_request)],
         [text_request, response_ok(text_file)]]
 
     return valid_params_table
-"""
-
-    image_request = 'GET requestfiles/sample.py HTTP/1.1\r\n'
-    image_request += 'host: http://www.example.com\r\n\r\n'
-
-    image_file = str(open('requestfiles/images/russell.jpg',
-                          'rb').read())
-
-"""
 
 
 @pytest.mark.parametrize("http_request, output", test_create_valid_params_table())
