@@ -6,7 +6,7 @@ import sys
 
 def client(message, buffer_length=8):
     """Create a client."""
-    infos = socket.getaddrinfo('127.0.0.1', 5000)
+    infos = socket.getaddrinfo('127.0.0.1', 5023)
     stream_info = [i for i in infos if i[1] == socket.SOCK_STREAM][0]
     client = socket.socket(*stream_info[:3])
     try:
@@ -40,6 +40,6 @@ def echo_message(client, message, buffer_length):
 
 
 if __name__ == '__main__':
-    request = 'GET /home/jordan/http_server/src/webroot/sample.py HTTP/1.1\r\n'
+    request = 'GET requestfiles/ HTTP/1.1\r\n'
     request += 'host: http://www.example.com\r\n\r\n'
     client(request)

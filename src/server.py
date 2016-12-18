@@ -8,7 +8,7 @@ import os
 
 def server(http_response=False, buffer_length=8):
     """Create a server."""
-    address = ('127.0.0.1', 5000)
+    address = ('127.0.0.1', 5023)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -69,7 +69,7 @@ def parse_request(request):
             raise ValueError
         host_line = [line for line in header_lines if line[:6] == 'host: ']
 
-        # Check validitiy of host.
+        # Check validity of host.
 
         if not host_line:
             error = 'No Host Provided.'
@@ -81,6 +81,7 @@ def parse_request(request):
                 raise ValueError
 
         # Check for correct ending of request.
+
         if header_lines[-1] != '' or header_lines[-2] != '':
             error = 'HTTP request not properly ended'
             raise ValueError
@@ -89,7 +90,7 @@ def parse_request(request):
             return ('This HTTP request is malformed.', True)
         return (error, True)
 
-    # If no errors, return URI
+    # If no errors, return URI.
 
     return (top_line[1], False)
 
@@ -98,15 +99,29 @@ def resolve_uri(uri):
     """If input is file, return contents, if dir, return dir contents."""
     uri = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                        uri)
-    print (uri)
+
+    # Return URI if file.
+
     if os.path.isfile(uri):
-        print ('Yes')
-        print (mimetypes.guess_type(uri))
         if 'text' in mimetypes.guess_type(uri)[0]:
             file = open(uri, 'r')
-            file_contents = file.read().encode('utf8')
-            print(file_contents)
-            file.close()
+            contents = file.read().encode('utf8')
+            print(contents)
+        else:
+            file = open(uri, 'rb')
+            contents = file.read()
+            print(contents)
+        file.close()
+        return contents
+
+    # Return HTML listing if URI is directory.
+
+    elif os.path.isdir(uri):
+        contents = ['<!DOCTYPE html>', '<html><body>']
+        for item in os.listdir(uri):
+            contents.append('<a href="' + item + '">')
+        contents.extend(['</body>', '</html>'])
+        return ''.join(contents)
 
 
 def response_ok():
