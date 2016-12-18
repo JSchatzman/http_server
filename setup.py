@@ -3,8 +3,8 @@
 from setuptools import setup
 
 setup(
-    name='echo_server',
-    description='Implementation of Linked List.',
+    name='Server Part 3',
+    description='Implementation of locally hosted server and client.',
     version=0.1,
     author='Jordan Schatzman, Regenal Grant',
     author_email='j.schatzman@outlook.com',
