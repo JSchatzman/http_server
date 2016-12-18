@@ -109,11 +109,9 @@ def resolve_uri(uri):
         if 'text' in mimetypes.guess_type(uri)[0]:
             file = open(uri, 'r')
             contents = file.read().encode('utf8')
-            print(contents)
         else:
             file = open(uri, 'rb')
             contents = file.read()
-            print(contents)
         file.close()
         return contents
 
