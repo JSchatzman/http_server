@@ -8,7 +8,7 @@ import os
 
 def server(http_response=False, buffer_length=8):
     """Create a server."""
-    address = ('127.0.0.1', 5048)
+    address = ('127.0.0.1', 5047)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -133,7 +133,7 @@ def response_ok(uri_result=None):
     message += formatdate(timeval=None, localtime=False, usegmt=True)
     message += '\r\n\r\n'
     if uri_result:
-        message += uri_result + '\r\n\r\n'
+        message += str(uri_result) + '\r\n\r\n'
     message.encode('utf8')
     return message
 
