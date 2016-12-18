@@ -8,7 +8,7 @@ import os
 
 def server(http_response=False, buffer_length=8):
     """Create a server."""
-    address = ('127.0.0.1', 5047)
+    address = ('127.0.0.1', 5048)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -43,6 +43,8 @@ def message_handle(message, buffer_length, http_response=False):
             request_resonse = resolve_uri(output)
             if request_resonse:
                 message_output = response_ok(request_resonse)
+            else:
+                message_output = response_error(404)
     else:
         message_output = output
     if len(message_output) % 8 == 0:
@@ -60,35 +62,35 @@ def parse_request(request):
         # Check validity of top line.
 
         if len(header_lines) < 3:
-            error = 'This HTTP request is malformed.'
+            error = 400
             raise ValueError
         elif top_line[0] != 'GET':
-            error = 'HTTP request must be a GET'
+            error = 405
             raise ValueError
         elif top_line[2] != 'HTTP/1.1':
-            error = 'Must be HTTP version 1.1'
+            error = 505
             raise ValueError
         host_line = [line for line in header_lines if line[:6] == 'host: ']
 
         # Check validity of host.
 
         if not host_line:
-            error = 'No Host Provided.'
+            error = '400 no host'
             raise ValueError
         else:
             host_line_contents = str(host_line).split(' ')
             if host_line_contents[1][:11].lower() != 'http://www.':
-                error = 'Invalid Host'
+                error = '400 invalid host'
                 raise ValueError
 
         # Check for correct ending of request.
 
         if header_lines[-1] != '' or header_lines[-2] != '':
-            error = 'HTTP request not properly ended'
+            error = '400 bad ending'
             raise ValueError
     except ValueError:
         if not error:
-            return ('This HTTP request is malformed.', True)
+            return (400, True)
         return (error, True)
 
     # If no errors, return URI.
@@ -136,10 +138,30 @@ def response_ok(uri_result=None):
     return message
 
 
-def response_error(error_message):
+def response_error(error_code):
     """Return a 400 error."""
-    error_return = '400 Bad Request\r\n'
-    error_return += error_message + '\r\n\r\n'
+    if error_code == 405:
+        error_return = '405 Method Not Allowed\r\n'
+        error_return += 'Must be a GET method'
+    elif error_code == 505:
+        error_return = '505 HTTP Version Not Supported\r\n'
+        error_return += 'Must be using HTTP v1.1'
+    elif error_code == 404:
+        error_return = '404 Not Found\r\n'
+        error_return += 'The Requested URI Could Not Be Found'
+    elif error_code == '400 no host':
+        error_return = '400 Bad Request\r\n'
+        error_return += 'No host was provided'
+    elif error_code == '400 invalid host':
+        error_return = '400 Bad Request\r\n'
+        error_return += 'Invalid Host Provied'
+    elif error_code == '400 bad ending':
+        error_return = '400 Bad Request\r\n'
+        error_return += 'Improperly Ended Request'
+    else:
+        error_return = '400 Bad Request\r\n'
+        error_return += 'Malformed Request'
+    error_return.encode('utf8')
     return error_return
 
 

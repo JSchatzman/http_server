@@ -44,18 +44,18 @@ def test_create_error_params_table():
     malformed = 'blah'
 
     error_params_table = [
-        [no_get, response_error('HTTP request must be a GET')],
-        [no_host, response_error('No Host Provided.')],
-        [wrong_version, response_error('Must be HTTP version 1.1')],
-        [wrong_ending, response_error('HTTP request not properly ended')],
-        [invalid_host, response_error('Invalid Host')],
-        [malformed, response_error('This HTTP request is malformed.')]]
+        [no_get, response_error(405)],
+        [no_host, response_error('400 no host')],
+        [wrong_version, response_error(505)],
+        [wrong_ending, response_error('400 bad ending')],
+        [invalid_host, response_error('400 invalid host')],
+        [malformed, response_error('400 Bad Request')]]
 
     return error_params_table
 
 
 @pytest.mark.parametrize("http_request, output", test_create_error_params_table())
-def test_client(http_request, output):
+def test_client_invalid(http_request, output):
     """Assert that different invalid requests are replied correctly."""
     client, response_ok, response_error = test_import_functions()
     assert client(http_request) == output
