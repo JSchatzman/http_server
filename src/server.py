@@ -8,7 +8,7 @@ import os
 
 def server(http_response=False, buffer_length=8):
     """Create a server."""
-    address = ('127.0.0.1', 5023)
+    address = ('127.0.0.1', 5047)
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -40,8 +40,9 @@ def message_handle(message, buffer_length, http_response=False):
         if error_status:
             message_output = response_error(output)
         else:
-            resolve_uri(output)
-            message_output = response_ok()
+            request_resonse = resolve_uri(output)
+            if request_resonse:
+                message_output = response_ok(request_resonse)
     else:
         message_output = output
     if len(message_output) % 8 == 0:
@@ -124,17 +125,19 @@ def resolve_uri(uri):
         return ''.join(contents)
 
 
-def response_ok():
+def response_ok(uri_result=None):
     """Return a HTTP 200 response."""
     message = 'HTTP/1.1 200 OK\r\nDate: '
     message += formatdate(timeval=None, localtime=False, usegmt=True)
-    message += '\r\nThis is a minimal response\r\n'
+    message += '\r\n\r\n'
+    if uri_result:
+        message += uri_result + '\r\n\r\n'
     message.encode('utf8')
     return message
 
 
 def response_error(error_message):
-    """Return a 500 error."""
+    """Return a 400 error."""
     error_return = '400 Bad Request\r\n'
     error_return += error_message + '\r\n\r\n'
     return error_return
