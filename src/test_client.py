@@ -1,5 +1,5 @@
-"""Test the echo server functionality."""
 # -*- coding: utf-8 -*-
+"""Test the echo server functionality."""
 
 
 def test_client():
@@ -8,4 +8,4 @@ def test_client():
     assert client('short') == 'short'
     assert client('blah') == 'blah'
     assert client('88888888') == '88888888'
-    assert client('±¥Ä') == '±¥Ä'
+    assert client(u'±¥Ä') == u'±¥Ä'
