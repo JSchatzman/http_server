@@ -5,23 +5,20 @@ from email.utils import formatdate
 import mimetypes
 import os
 
+BUFFER_LENGTH = 1024
+#http_response=False, buffer_length=1024)
 
-def server(http_response=False, buffer_length=1024):
+def server(socket, address):
+
     """Create a server."""
-    address = ('127.0.0.1', 5047)
-    server = socket.socket(socket.AF_INET,
-                           socket.SOCK_STREAM,
-                           socket.IPPROTO_TCP)
-    server.bind(address)
-    server.listen(1)
     try:
-        while True:
-            conn, addr = server.accept()
-            message = message_handle(conn, buffer_length, True)
-            conn.sendall(message.encode('utf8'))
+        if socket:
+            while True:
+                message = message_handle(socket, BUFFER_LENGTH, True)
+                socket.sendall(message.encode('utf8'))
     except (KeyboardInterrupt):
         print ('Shutting Down')
-        server.close()
+        socket.close()
 
 
 def message_handle(message, buffer_length, http_response=False):
