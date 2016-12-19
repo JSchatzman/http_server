@@ -1,21 +1,21 @@
 """Implementation of server."""
 
-import socket
+
 from email.utils import formatdate
 import mimetypes
 import os
 
 BUFFER_LENGTH = 1024
-#http_response=False, buffer_length=1024)
+
 
 def server(socket, address):
-
     """Create a server."""
     try:
         if socket:
             while True:
                 message = message_handle(socket, BUFFER_LENGTH, True)
                 socket.sendall(message.encode('utf8'))
+                return socket.close()
     except (KeyboardInterrupt):
         print ('Shutting Down')
         socket.close()
@@ -161,4 +161,4 @@ def response_error(error_code):
 
 
 if __name__ == '__main__':
-    server(True)
+    server()
