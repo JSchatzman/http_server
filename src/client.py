@@ -40,6 +40,9 @@ def echo_message(client, message, buffer_length):
 
 
 if __name__ == '__main__':
-    request = 'GOT requestfiles/sample.html HTTP/1.1\r\n'
+    request = 'GET requestfiles/sample.html HTTP/1.1\r\n'
     request += 'host: http://www.example.com\r\n\r\n'
-    client(request)
+    if not sys.argv[1]:
+        client(request)
+    else:
+        client(sys.argv[1])
